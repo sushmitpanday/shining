@@ -86,7 +86,7 @@ export default function FeaturedSection() {
               >
                 {jobs.map((job) => (
                   <SwiperSlide key={job._id}>
-                    <CardItem job={job} baseURL={API_BASE_URL} />
+                    <CardItem job={job} />
                   </SwiperSlide>
                 ))}
               </Swiper>
@@ -94,7 +94,7 @@ export default function FeaturedSection() {
 
             <div className="flex flex-col gap-6 md:hidden">
               {jobs.map((job) => (
-                <CardItem key={job._id} job={job} baseURL={API_BASE_URL} />
+                <CardItem key={job._id} job={job}  />
               ))}
             </div>
           </>
@@ -104,14 +104,14 @@ export default function FeaturedSection() {
   );
 }
 
-// Props mein baseURL pass kiya taaki image sahi jagah se uthaye
-function CardItem({ job, baseURL }) {
+// direct cloudnary url use ho ra 
+function CardItem({ job }) {
   return (
     <div className="group relative bg-slate-900/50 rounded-[2.5rem] border border-white/5 overflow-hidden transition-all duration-500 hover:border-indigo-500/30 hover:-translate-y-2 shadow-xl">
       <div className="relative h-72 w-full p-4 flex items-center justify-center bg-slate-950/30">
         {job.jobImage ? (
           <img 
-            src={`${baseURL}${job.jobImage}`} 
+            src={job.jobImage} 
             alt={job.title}
             className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105"
           />

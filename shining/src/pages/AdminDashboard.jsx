@@ -104,7 +104,7 @@ export default function AdminDashboard() {
             <div className="max-h-[500px] overflow-y-auto pr-2 space-y-4">
               {jobs.map((job) => (
                 <div key={job._id} className="bg-slate-900 border border-white/5 p-4 rounded-3xl flex items-center gap-4 hover:border-indigo-500/50 transition-all">
-                  <img src={`${API_BASE_URL}${job.jobImage}`} className="w-16 h-16 rounded-xl object-cover" alt="job" />
+              <img src={job.jobImage} className="w-16 h-16 rounded-xl object-cover" alt="job" />
                   <div className="flex-1">
                     <h4 className="font-bold text-sm">{job.title}</h4>
                     <p className="text-white/30 text-[10px]">{new Date(job.createdAt).toDateString()}</p>
