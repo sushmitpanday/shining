@@ -1,50 +1,40 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
-// Routes import
 const authRoutes = require('./routes/authRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 
 const app = express();
 
-// 1. Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 2. Health Check / Root Route
-// Isse "Cannot GET /" wala error khatam ho jayega
-app.get('/', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "Shining Placement API is live and running!",
-        timestamp: new Date().toISOString()
-    });
-});
+// Auto-create uploads folder agar nahi hai toh
+if (!fs.existsSync('./uploads')) {
+    fs.mkdirSync('./uploads');
+}
 
-// 3. Database Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB Connected Successfully"))
-    .catch(err => {
-        console.error("❌ DB Connection Error:", err.message);
-        process.exit(1); // Agar DB connect na ho toh process exit kar dein
-    });
+// Static folder for images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 4. Routes Mapping
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
 
-// 5. Global Error Handler (Acha practice hai debugging ke liye)
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: "Server mein kuch internal error aa gaya hai!"
-    });
+app.get('/', (req, res) => {
+    res.status(200).json({ success: true, message: "API is Live!" });
 });
 
-// 6. Port Selection
-// Render process.env.PORT automatically provide karta hai
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+// Database & Server Start
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("✅ MongoDB Connected");
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+    })
+    .catch(err => console.error("❌ DB Error:", err));

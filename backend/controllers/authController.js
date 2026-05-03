@@ -3,7 +3,7 @@ const loginUser = (req, res) => {
 
     // Hardcoded Credentials
     const ADMIN_NAME = "deepak";
-    const ADMIN_PASSWORD = "shining123";
+    const ADMIN_PASSWORD = "ds123";
 
     if (name === ADMIN_NAME && password === ADMIN_PASSWORD) {
         res.status(200).json({
