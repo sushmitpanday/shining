@@ -56,7 +56,7 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Kyu Malik, delete kar dein?")) {
+    if (window.confirm("Do you really want to delete this job?")) {
       try {
         await axios.delete(`${API_BASE_URL}/api/jobs/delete-job/${id}`, AUTH_HEADER);
         fetchJobs();

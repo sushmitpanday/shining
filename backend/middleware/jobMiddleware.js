@@ -1,35 +1,26 @@
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
 
-// 1. Malik, yahan batayenge ki file kahan aur kis naam se save hogi
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Backend root mein 'uploads' folder hona zaroori hai
-    },
-    filename: (req, file, cb) => {
-        // File ka naam unique rakhne ke liye timestamp jod rahe hain
-        cb(null, "JOB_POST_" + Date.now() + path.extname(file.originalname));
-    }
+// Malik, ye keys aapke .env file se aayengi
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET
 });
 
-// 2. File check karne ka filter (Taaki koi virus ya galat file na daal de)
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
-    const isMatch = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimeMatch = allowedTypes.test(file.mimetype);
+// Cloudinary storage setup
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'shining_jobs', // Cloudinary par ye folder ban jayega
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    },
+});
 
-    if (isMatch && mimeMatch) {
-        return cb(null, true);
-    } else {
-        cb(new Error("Sir, sirf Images (JPG, PNG, WEBP) hi upload kar sakte hain!"));
-    }
-};
-
-// 3. Final Middleware Export
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // Malik, 5MB se badi image allow nahi hogi
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
 module.exports = upload;

@@ -1,4 +1,4 @@
-const job = require('../models/job'); // Yahan chota j hai
+const job = require('../models/job');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,9 +8,9 @@ exports.postNewJob = async(req, res) => {
         const { title, description } = req.body;
         if (!req.file) return res.status(400).json({ message: "Image upload fail hui!" });
 
-        const jobImage = `/uploads/${req.file.filename}`;
+        // req.file.path ab seedha "https://res.cloudinary.com/..." wala link hai
+        const jobImage = req.file.path;
 
-        // Yahan 'job' chota kar diya (Bade 'Job' ki jagah)
         const newJob = new job({ title, description, jobImage });
         await newJob.save();
 
@@ -20,19 +20,14 @@ exports.postNewJob = async(req, res) => {
     }
 };
 
-// 2. Delete Job (With Image Cleanup)
+// 2. Delete Job
 exports.deleteJobById = async(req, res) => {
     try {
-        // Yahan bhi 'job' chota kar diya
         const foundJob = await job.findById(req.params.id);
         if (!foundJob) return res.status(404).json({ message: "Job nahi mili!" });
 
-        // Folder se image delete karna
-        if (foundJob.jobImage) {
-            const fullPath = path.join(__dirname, '..', foundJob.jobImage);
-            if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-        }
-
+        // Note: Cloudinary se delete karne ka logic alag hota hai, 
+        // par abhi ke liye database se delete karna kaafi hai.
         await job.findByIdAndDelete(req.params.id);
         res.json({ success: true, message: "Job deleted!" });
     } catch (error) {
@@ -43,7 +38,6 @@ exports.deleteJobById = async(req, res) => {
 // 3. Get All Jobs
 exports.getAllPlacements = async(req, res) => {
     try {
-        // Yahan bhi 'job' chota kar diya
         const jobs = await job.find().sort({ createdAt: -1 });
         res.json(jobs);
     } catch (error) {
