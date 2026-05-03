@@ -4,6 +4,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "npm install --legacy-peer-deps",
+        "start": "node index.js",
         "dev": "nodemon index.jx"
     },
     "keywords": [],
