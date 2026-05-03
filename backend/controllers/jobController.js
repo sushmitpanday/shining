@@ -1,4 +1,4 @@
-const Job = require('../models/Job');
+const job = require('../models/job'); // Yahan chota j hai
 const fs = require('fs');
 const path = require('path');
 
@@ -9,7 +9,9 @@ exports.postNewJob = async(req, res) => {
         if (!req.file) return res.status(400).json({ message: "Image upload fail hui!" });
 
         const jobImage = `/uploads/${req.file.filename}`;
-        const newJob = new Job({ title, description, jobImage });
+
+        // Yahan 'job' chota kar diya (Bade 'Job' ki jagah)
+        const newJob = new job({ title, description, jobImage });
         await newJob.save();
 
         res.status(201).json({ success: true, job: newJob });
@@ -21,16 +23,17 @@ exports.postNewJob = async(req, res) => {
 // 2. Delete Job (With Image Cleanup)
 exports.deleteJobById = async(req, res) => {
     try {
-        const job = await Job.findById(req.params.id);
-        if (!job) return res.status(404).json({ message: "Job nahi mili!" });
+        // Yahan bhi 'job' chota kar diya
+        const foundJob = await job.findById(req.params.id);
+        if (!foundJob) return res.status(404).json({ message: "Job nahi mili!" });
 
         // Folder se image delete karna
-        if (job.jobImage) {
-            const fullPath = path.join(__dirname, '..', job.jobImage);
+        if (foundJob.jobImage) {
+            const fullPath = path.join(__dirname, '..', foundJob.jobImage);
             if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
         }
 
-        await Job.findByIdAndDelete(req.params.id);
+        await job.findByIdAndDelete(req.params.id);
         res.json({ success: true, message: "Job deleted!" });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -40,7 +43,8 @@ exports.deleteJobById = async(req, res) => {
 // 3. Get All Jobs
 exports.getAllPlacements = async(req, res) => {
     try {
-        const jobs = await Job.find().sort({ createdAt: -1 });
+        // Yahan bhi 'job' chota kar diya
+        const jobs = await job.find().sort({ createdAt: -1 });
         res.json(jobs);
     } catch (error) {
         res.status(500).json({ error: error.message });
