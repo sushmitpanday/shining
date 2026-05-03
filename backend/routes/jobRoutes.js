@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/jobMiddleware');
-const { postNewJob, deleteJobById, getAllPlacements } = require('../controllers/jobController');
+const { postNewJob, deleteJobById, getAllPlacements } = require('../controllers/JobController');
 
 // Nayi job dalne ke liye
 router.post('/add-job', upload.single('jobImage'), postNewJob);
