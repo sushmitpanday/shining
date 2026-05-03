@@ -14,7 +14,7 @@ const handleLogin = async (e) => {
     // Agar localhost par ho toh 5000, nahi toh Render wala link
     const API_BASE_URL = window.location.hostname === "localhost" 
       ? "http://localhost:5000" 
-      : "https://shining-3.onrender.com";
+      : "https://shining-7.onrender.com";
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {

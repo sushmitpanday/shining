@@ -16,7 +16,7 @@ export default function FeaturedSection() {
   // --- 1. DYNAMIC API URL ---
   const API_BASE_URL = window.location.hostname === "localhost" 
     ? "http://localhost:5000" 
-    : "https://shining-3.onrender.com";
+    : "https://shining-7.onrender.com";
 
   useEffect(() => {
     const fetchJobs = async () => {
