@@ -9,18 +9,17 @@ cloudinary.config({
     api_secret: process.env.CLOUD_SECRET
 });
 
-// Cloudinary storage setup
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'shining_jobs', // Cloudinary par ye folder ban jayega
+        folder: 'shining_jobs',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
     },
 });
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 module.exports = upload;

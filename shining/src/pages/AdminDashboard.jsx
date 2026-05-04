@@ -45,20 +45,26 @@ export default function AdminDashboard() {
 
     try {
       await axios.post(`${API_BASE_URL}/api/jobs/add-job`, formData, {
-        headers: { ...AUTH_HEADER.headers, 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'admin-secret': 'MAHAKAAL_ADMIN_KEY',
+          'Content-Type': 'multipart/form-data' 
+        }
       });
       alert("Job Posted!");
       setTitle(''); setDescription(''); setImage(null); setPreview(null);
       fetchJobs();
     } catch (err) {
-      alert("Post failed: " + (err.response?.data?.message || "Server Error"));
+      console.error("Error Detail:", err.response?.data);
+      alert("Post failed: " + (err.response?.data?.error || "Server Error"));
     } finally { setLoading(false); }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Do you really want to delete this job?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/jobs/delete-job/${id}`, AUTH_HEADER);
+        await axios.delete(`${API_BASE_URL}/api/jobs/delete-job/${id}`, {
+          headers: AUTH_HEADER.headers 
+        });
         fetchJobs();
       } catch (err) { alert("Delete failed!"); }
     }
@@ -67,12 +73,11 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#020617] text-white p-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-black mb-10 flex items-center gap-3">
-          <PlusCircle className="text-indigo-500" /> ADMIN CONTROL
+        <h2 className="text-3xl font-black mb-10 flex items-center gap-3 uppercase">
+          <PlusCircle className="text-indigo-500" /> Admin Control
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* CREATE JOB FORM */}
           <form onSubmit={handleSubmit} className="bg-slate-900/50 p-8 rounded-[2.5rem] border border-white/10 h-fit shadow-2xl">
             <div className="space-y-5">
               <input 
@@ -92,24 +97,23 @@ export default function AdminDashboard() {
                 <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
               </div>
 
-              <button disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 py-4 rounded-2xl font-black flex justify-center items-center gap-2">
+              <button disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 py-4 rounded-2xl font-black flex justify-center items-center gap-2 transition-all">
                 {loading ? <Loader2 className="animate-spin" /> : "POST JOB NOW"}
               </button>
             </div>
           </form>
 
-          {/* ACTIVE LISTINGS */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white/40">Live Placements</h3>
-            <div className="max-h-[500px] overflow-y-auto pr-2 space-y-4">
+            <h3 className="text-xl font-bold text-white/40 uppercase tracking-widest">Live Placements</h3>
+            <div className="max-h-[500px] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
               {jobs.map((job) => (
                 <div key={job._id} className="bg-slate-900 border border-white/5 p-4 rounded-3xl flex items-center gap-4 hover:border-indigo-500/50 transition-all">
-              <img src={job.jobImage} className="w-16 h-16 rounded-xl object-cover" alt="job" />
+                  <img src={job.jobImage} className="w-16 h-16 rounded-xl object-cover" alt="job" />
                   <div className="flex-1">
-                    <h4 className="font-bold text-sm">{job.title}</h4>
+                    <h4 className="font-bold text-sm uppercase">{job.title}</h4>
                     <p className="text-white/30 text-[10px]">{new Date(job.createdAt).toDateString()}</p>
                   </div>
-                  <button onClick={() => handleDelete(job._id)} className="p-3 text-red-500 hover:bg-red-500/10 rounded-xl">
+                  <button onClick={() => handleDelete(job._id)} className="p-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-colors">
                     <Trash2 size={20} />
                   </button>
                 </div>

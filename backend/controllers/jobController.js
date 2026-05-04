@@ -1,6 +1,4 @@
 const job = require('../models/job');
-const fs = require('fs');
-const path = require('path');
 
 // 1. Post Job
 exports.postNewJob = async(req, res) => {
@@ -8,7 +6,6 @@ exports.postNewJob = async(req, res) => {
         const { title, description } = req.body;
         if (!req.file) return res.status(400).json({ message: "Image upload fail hui!" });
 
-        // req.file.path ab seedha "https://res.cloudinary.com/..." wala link hai
         const jobImage = req.file.path;
 
         const newJob = new job({ title, description, jobImage });
@@ -16,20 +13,16 @@ exports.postNewJob = async(req, res) => {
 
         res.status(201).json({ success: true, job: newJob });
     } catch (error) {
+        console.error("ASLI ERROR YE HAI:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-// 2. Delete Job
+// 2. Delete Job (Only from Database)
 exports.deleteJobById = async(req, res) => {
     try {
-        const foundJob = await job.findById(req.params.id);
-        if (!foundJob) return res.status(404).json({ message: "Job nahi mili!" });
-
-        // Note: Cloudinary se delete karne ka logic alag hota hai, 
-        // par abhi ke liye database se delete karna kaafi hai.
         await job.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: "Job deleted!" });
+        res.json({ success: true, message: "Job deleted from DB!" });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
