@@ -9,9 +9,8 @@ export default function FeaturedSection() {
   const [cvFile, setCvFile] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
 
-  const API_BASE_URL = window.location.hostname === "localhost" 
-    ? "http://localhost:5000" 
-    : "https://shining-8.onrender.com";
+  // Render Backend URL
+  const API_BASE_URL = "https://shining-8.onrender.com"; 
 
   // CV Submit Handler
   const handleCvSubmit = async (e) => {
@@ -26,15 +25,21 @@ export default function FeaturedSection() {
     data.append('cv', cvFile);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/upload-cv`, data);
+      const res = await axios.post(`${API_BASE_URL}/api/upload-cv`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
       if (res.data.success) {
-        alert("CV Sent Successfully!");
+        alert("✅ CV Sent Successfully!");
         setIsModalOpen(false);
         setFormData({ name: '', email: '', phone: '' });
         setCvFile(null);
       }
     } catch (err) {
-      alert("Error sending CV");
+      console.error("Upload Error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Error sending CV. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -42,6 +47,7 @@ export default function FeaturedSection() {
 
   return (
     <section className="py-20 bg-[#020617] px-4 md:px-10 relative overflow-hidden">
+      
       {/* --- Center Upload Button Section --- */}
       <div className="max-w-4xl mx-auto text-center mb-16">
         <button 
@@ -54,7 +60,7 @@ export default function FeaturedSection() {
         </button>
       </div>
 
-      {/* --- About / Intro Paragraph Section --- */}
+      {/* --- About / Intro Paragraph Section (YE WAPAS AA GAYA) --- */}
       <div className="max-w-5xl mx-auto">
         <div className="bg-slate-900/40 border border-white/5 rounded-[3rem] p-8 md:p-12 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -128,14 +134,14 @@ export default function FeaturedSection() {
                 <div className="relative border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-indigo-500/50 transition-colors">
                   <input 
                     type="file" 
-                    accept=".pdf,.doc,.docx,image/*" 
+                    accept=".pdf,.doc,.docx" 
                     required
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     onChange={(e) => setCvFile(e.target.files[0])}
                   />
                   <Upload className="mx-auto text-indigo-500 mb-2" size={24} />
                   <p className="text-white/60 text-xs">
-                    {cvFile ? cvFile.name : "Click to select PDF or Image"}
+                    {cvFile ? cvFile.name : "Select CV (PDF/DOC)"}
                   </p>
                 </div>
               </div>
@@ -145,7 +151,7 @@ export default function FeaturedSection() {
                 disabled={uploading}
                 className="w-full mt-6 py-4 rounded-xl bg-indigo-600 text-white font-black uppercase text-xs hover:bg-indigo-700 transition-all disabled:opacity-50"
               >
-                {uploading ? "Sending Application..." : "Send to HR"}
+                {uploading ? "Sending..." : "Submit Application"}
               </button>
             </form>
           </div>
