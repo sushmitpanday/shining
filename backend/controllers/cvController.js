@@ -9,6 +9,7 @@ exports.uploadCV = async(req, res) => {
             return res.status(400).json({ success: false, message: "CV file is required" });
         }
 
+        // Transporter setup
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 465,
@@ -26,15 +27,25 @@ exports.uploadCV = async(req, res) => {
             text: `Candidate Details:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}`,
             attachments: [{
                 filename: file.originalname,
-                path: file.path
+                path: file.path // Multer ne jo path diya hai (/tmp/...) wahan se file uthayega
             }]
         };
 
+        // Mail bhejein
         await transporter.sendMail(mailOptions);
+
+        // Render pe file system ephemeral hota hai, isliye humne /tmp use kiya hai.
+        // Nodemailer file bhejte hi automatically handle kar leta hai.
+
         res.status(200).json({ success: true, message: "CV sent to HR successfully!" });
 
     } catch (error) {
         console.error("❌ Mail Error:", error);
-        res.status(500).json({ success: false, message: "Failed to send email", error: error.message });
+        // Proper error response for debugging
+        res.status(500).json({
+            success: false,
+            message: "Failed to send email",
+            error: error.message
+        });
     }
 };
