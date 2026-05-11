@@ -12,7 +12,7 @@ export default function AdminDashboard() {
 
   const API_BASE_URL = window.location.hostname === "localhost" 
     ? "http://localhost:5000" 
-    : "https://shining-7.onrender.com";
+    : "https://shining-8.onrender.com";
 
   const AUTH_HEADER = { headers: { 'admin-secret': 'MAHAKAAL_ADMIN_KEY' } };
 

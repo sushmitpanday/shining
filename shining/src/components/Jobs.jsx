@@ -11,7 +11,7 @@ export default function FeaturedSection() {
 
   const API_BASE_URL = window.location.hostname === "localhost" 
     ? "http://localhost:5000" 
-    : "https://shining-7.onrender.com";
+    : "https://shining-8.onrender.com";
 
   // CV Submit Handler
   const handleCvSubmit = async (e) => {
