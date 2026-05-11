@@ -10,7 +10,7 @@ export default function FeaturedSection() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
 
   // Render Backend URL
-  const API_BASE_URL = "https://shining-10.onrender.com"; 
+  const API_BASE_URL = "https://shining-11.onrender.com"; 
 
   // CV Submit Handler
   const handleCvSubmit = async (e) => {
