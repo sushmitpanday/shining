@@ -7,30 +7,28 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const jobRoutes = require('./routes/jobRoutes');
+const cvRoutes = require('./routes/cvRoutes'); // Ye naya route import karo
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Auto-create uploads folder agar nahi hai toh
 if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
 }
 
-// Static folder for images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// Routes - Yahan sirf connection hona chahiye
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api', cvRoutes); // Isse /api/upload-cv chalega
 
 app.get('/', (req, res) => {
     res.status(200).json({ success: true, message: "API is Live!" });
 });
 
-// Database & Server Start
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("✅ MongoDB Connected");
