@@ -9,15 +9,17 @@ exports.uploadCV = async(req, res) => {
             return res.status(400).json({ success: false, message: "CV file is required" });
         }
 
-        // Transporter setup
+        // Transporter fix: 'service: gmail' use karo
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
+            service: 'gmail',
             auth: {
                 user: 'shiningplacement01@gmail.com',
-                pass: 'bysvubzlazasdolc'
+                pass: 'bysvubzlazasdolc' // Tera App Password
             },
+            // Timeout settings taaki "Sending..." par na atke
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
         const mailOptions = {
@@ -27,22 +29,18 @@ exports.uploadCV = async(req, res) => {
             text: `Candidate Details:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}`,
             attachments: [{
                 filename: file.originalname,
-                path: file.path // Multer ne jo path diya hai (/tmp/...) wahan se file uthayega
+                path: file.path
             }]
         };
 
-        // Mail bhejein
         await transporter.sendMail(mailOptions);
 
-        // Render pe file system ephemeral hota hai, isliye humne /tmp use kiya hai.
-        // Nodemailer file bhejte hi automatically handle kar leta hai.
-
-        res.status(200).json({ success: true, message: "CV sent to HR successfully!" });
+        // Response bhejte waqt success return karo
+        return res.status(200).json({ success: true, message: "CV sent to HR successfully!" });
 
     } catch (error) {
         console.error("❌ Mail Error:", error);
-        // Proper error response for debugging
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Failed to send email",
             error: error.message
