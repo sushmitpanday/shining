@@ -11,7 +11,7 @@ export default function FeaturedSection() {
   // Dynamic URL: Local par localhost, Render par Render
   const API_BASE_URL = window.location.hostname === "localhost" 
     ? "http://localhost:5000" 
-    : "https://shining-11.onrender.com";
+    : "https://shining-12.onrender.com";
 
   const handleCvSubmit = async (e) => {
     e.preventDefault();
